@@ -2,6 +2,10 @@ server:
   port: 8080
   servlet:
     context-path: /api
+    # cookie 30 天过期
+    session:
+        cookie:
+          max-age: 2592000
 spring:
   servlet:
     multipart:
@@ -16,6 +20,17 @@ spring:
     url: jdbc:mysql://localhost:3306/hhh_picture
     username: root
     password: 123456
+  #redis配置
+  redis:
+    host: localhost
+    port: 6379
+    database: 0
+    timeout: 10000
+  # session 配置
+  session:
+    store-type: redis
+    # session 30 天过期
+    timeout: 2592000
 
 mybatis-plus:
   configuration:

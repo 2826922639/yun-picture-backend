@@ -8,8 +8,15 @@ public class UploadPictureResult {
     /**  
      * 图片地址  
      */  
-    private String url;  
-  
+    private String url;
+    /**
+     * 图片首次缩略地址
+     */
+    private String sUrl;
+    /**
+     * 图片首次缩略key
+     */
+    private String sKey;
     /**  
      * 图片名称  
      */  
@@ -43,4 +50,16 @@ public class UploadPictureResult {
      * 图片key
      */
     private String cosKey;
+    /**
+     * 缩略图key
+     */
+    private String thumbnailKey;
+    /**
+     * 缩略图 url
+     */
+    private String thumbnailUrl;
+    /**
+     * 图片颜色
+     */
+    private String picColor;
 }
