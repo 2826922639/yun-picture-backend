@@ -93,6 +93,46 @@ public class Picture  implements Serializable {
      */
     private String cosKey;
     /**
+     * 审核状态;0-待审核;1-审核通过;2-审核未通过
+     */
+    private Integer reviewStatus;
+    /**
+     * 审核信息
+     */
+    private String reviewMessage;
+    /**
+     * 审核人id
+     */
+    private Long reviewerId;
+    /**
+     * 审核时间
+     */
+    private Date reviewTime;
+    /**
+     * 缩略图 url
+     */
+    private String thumbnailUrl;
+    /**
+     * 缩略图 cosKey
+     */
+    private String thumbnailKey;
+    /**
+     * 空间id（为空表示公共空间）
+     */
+    private Long spaceId;
+    /**
+     * 图片首次缩略地址
+     */
+    private String sUrl;
+    /**
+     * 图片首次缩略key
+     */
+    private String sKey;
+    /**
+     * 图片主色调
+     */
+    private String picColor;
+    /**
      * 是否删除
      */
     @TableLogic

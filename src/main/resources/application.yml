@@ -1,8 +1,6 @@
-server:
-  port: 8080
-  servlet:
-    context-path: /api
 spring:
+  profiles:
+    active: local
   servlet:
     multipart:
       enabled: true
@@ -16,7 +14,56 @@ spring:
     url: jdbc:mysql://localhost:3306/hhh_picture
     username: root
     password: 123456
+  #redis配置
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      database: 0
+      password:
+      ttl: 3600
 
+  # session 配置
+  session:
+    store-type: redis
+    # session 30 天过期
+    timeout: 2592000
+  # 空间图片分表
+  shardingsphere:
+    datasource:
+      names: hhh_picture
+      hhh_picture:
+        type: com.zaxxer.hikari.HikariDataSource
+        driver-class-name: com.mysql.cj.jdbc.Driver
+        url: jdbc:mysql://localhost:3306/hhh_picture
+        username: root
+        password: 123456
+    rules:
+      sharding:
+        tables:
+          picture:
+            actual-data-nodes: hhh_picture.picture  # 动态分表
+            table-strategy:
+              standard:
+                sharding-column: spaceId
+                sharding-algorithm-name: picture_sharding_algorithm  # 使用自定义分片算法
+        sharding-algorithms:
+          picture_sharding_algorithm:
+            type: CLASS_BASED
+            props:
+              strategy: standard
+              algorithmClassName: com.hhh.yunpicturebackend.manager.sharding.PictureShardingAlgorithm
+    props:
+      sql-show: true
+server:
+  address: 0.0.0.0
+  port: 8123
+  servlet:
+    context-path:
+    # cookie 30 天过期
+    session:
+      cookie:
+        max-age: 2592000
 mybatis-plus:
   configuration:
     # MyBatis 配置
@@ -24,10 +71,12 @@ mybatis-plus:
     #仅在开发环境打印日志
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
   global-config:
+    enable-sql-runner: true
     db-config:
       logic-delete-field: isDelete
       logic-delete-value: 1
       logic-not-delete-value: 0
+
 
 #接口文档配置
 knife4j:
@@ -40,13 +89,18 @@ knife4j:
         api-rule: package
         api-rule-resources:
           - com.hhh.yunpicturebackend.controller
-
-##对象存储配置（从腾讯云获取）
-#cos:
-#  client:
-#    host: xxx
-#    secretId: xxx
-#    secretKey: xxx
-#    region: xxx
-#    bucket: xxx
+# springdoc-openapi
+springdoc:
+  group-configs:
+    - group: 'default'
+      packages-to-scan: com.hhh.yunpicturebackend.controller
+#监控
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus
+  endpoint:
+    health:
+      show-details: always
 

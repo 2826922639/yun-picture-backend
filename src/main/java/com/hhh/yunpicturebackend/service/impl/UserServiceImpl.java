@@ -10,6 +10,7 @@ import com.hhh.yunpicturebackend.constant.UserConstant;
 import com.hhh.yunpicturebackend.exception.BusinessException;
 import com.hhh.yunpicturebackend.exception.ErrorCode;
 import com.hhh.yunpicturebackend.exception.ThrowUtils;
+import com.hhh.yunpicturebackend.manager.auth.StpKit;
 import com.hhh.yunpicturebackend.model.dto.user.UserLoginRequest;
 import com.hhh.yunpicturebackend.model.dto.user.UserQueryRequest;
 import com.hhh.yunpicturebackend.model.dto.user.UserRegisterRequest;
@@ -22,7 +23,7 @@ import com.hhh.yunpicturebackend.mapper.UserMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -114,6 +115,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         ThrowUtils.throwIf(user == null,ErrorCode.PARAMS_ERROR,"用户密码错误！");
         //6.保存用户登录状态
         request.getSession().setAttribute(UserConstant.USER_LOGIN_STATE,user);
+        //记录用户登录态到Sa-token，便于空间鉴权时使用，注意保证用户信息与SpringSession中的信息过期时间一致
+        StpKit.SPACE.login(user.getId());
+        StpKit.SPACE.getSession().set(UserConstant.USER_LOGIN_STATE,user);
         return this.getLoginUserVO(user);
     }
     /**

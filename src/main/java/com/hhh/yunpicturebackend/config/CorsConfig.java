@@ -19,4 +19,14 @@ public class CorsConfig implements WebMvcConfigurer {
                 .allowedHeaders("*")
                 .exposedHeaders("*");
     }
+    /*@Override
+    public void addCorsMappings(CorsRegistry registry) {
+        registry.addMapping("/**")
+                .allowCredentials(true)
+                .allowedOriginPatterns("http://192.168.124.6:5173") // 显式指定前端地址
+                .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+                .allowedHeaders("*")
+                .exposedHeaders("*");
+    }*/
+
 }

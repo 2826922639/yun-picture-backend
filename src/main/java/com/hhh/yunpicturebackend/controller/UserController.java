@@ -1,23 +1,25 @@
 package com.hhh.yunpicturebackend.controller;
 
 import cn.hutool.core.bean.BeanUtil;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.hhh.yunpicturebackend.annotation.AuthCheck;
 import com.hhh.yunpicturebackend.common.BaseResponse;
-import com.hhh.yunpicturebackend.common.DeleteRequeat;
+import com.hhh.yunpicturebackend.common.DeleteRequest;
 import com.hhh.yunpicturebackend.common.ResultUtils;
 import com.hhh.yunpicturebackend.constant.UserConstant;
 import com.hhh.yunpicturebackend.exception.ErrorCode;
 import com.hhh.yunpicturebackend.exception.ThrowUtils;
 import com.hhh.yunpicturebackend.model.dto.user.*;
 import com.hhh.yunpicturebackend.model.entity.User;
+import com.hhh.yunpicturebackend.model.enums.UserRoleEnum;
 import com.hhh.yunpicturebackend.model.vo.LoginUserVO;
 import com.hhh.yunpicturebackend.model.vo.UserVO;
 import com.hhh.yunpicturebackend.service.UserService;
 import org.springframework.web.bind.annotation.*;
 
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.List;
 
 @RestController
@@ -110,14 +112,14 @@ public class UserController {
     }
     /**
      * 删除用户
-     * @param deleteRequeat
+     * @param deleteRequest
      * @return
      */
     @PostMapping("/delete")
     @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
-    public BaseResponse<Boolean> deleteUser(@RequestBody DeleteRequeat deleteRequeat){
-        ThrowUtils.throwIf(deleteRequeat==null||deleteRequeat.getId()<=0,ErrorCode.PARAMS_ERROR);
-        boolean result = userService.removeById(deleteRequeat.getId());
+    public BaseResponse<Boolean> deleteUser(@RequestBody DeleteRequest deleteRequest){
+        ThrowUtils.throwIf(deleteRequest ==null|| deleteRequest.getId()<=0,ErrorCode.PARAMS_ERROR);
+        boolean result = userService.removeById(deleteRequest.getId());
         return ResultUtils.success(result);
     }
     /**
@@ -126,11 +128,23 @@ public class UserController {
      * @return
      */
     @PostMapping("/update")
-    @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
-    public BaseResponse<Boolean> updateUser(@RequestBody UserUpdateRequest userUpdateRequest){
+    //@AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
+    public BaseResponse<Boolean> updateUser(@RequestBody UserUpdateRequest userUpdateRequest,HttpServletRequest request){
         ThrowUtils.throwIf(userUpdateRequest==null, ErrorCode.PARAMS_ERROR);
         User user=new User();
-        BeanUtil.copyProperties(userUpdateRequest,user);
+        User loginUser = userService.getLoginUser(request);
+        if(userService.isAdmin(loginUser)){
+            ThrowUtils.throwIf(userUpdateRequest.getId().equals(loginUser.getId())&&userUpdateRequest.getUserRole().equals(UserConstant.DEFAULT_ROLE),ErrorCode.NO_AUTH,"不能修改自己的角色！");
+            BeanUtil.copyProperties(userUpdateRequest,user);
+        } else {
+            user.setId(loginUser.getId());
+            user.setUserAccount(userUpdateRequest.getUserAccount());
+            user.setUserName(userUpdateRequest.getUserName());
+            user.setUserAvatar(userUpdateRequest.getUserAvatar());
+            user.setUserProfile(userUpdateRequest.getUserProfile());
+            ThrowUtils.throwIf(userUpdateRequest.getUserRole().equals(UserConstant.ADMIN_ROLE),ErrorCode.NO_AUTH,"无权限操作用户角色！");
+
+        }
         boolean result = userService.updateById( user);
         ThrowUtils.throwIf(!result,ErrorCode.OPERATION_ERROR);
         return ResultUtils.success(result);
@@ -162,5 +176,16 @@ public class UserController {
     public BaseResponse<UserVO> getCurrentUser(HttpServletRequest request){
         User currentUser = userService.getLoginUser(request);
         return ResultUtils.success(userService.getUserVO(currentUser));
+    }
+    /**
+     * 头像
+     */
+    @PostMapping("/set/avatar")
+    public BaseResponse<Boolean> setAvatar(@RequestBody UserAvatarRequest avatarUrl, HttpServletRequest request){
+        ThrowUtils.throwIf(avatarUrl == null, ErrorCode.PARAMS_ERROR);
+        User loginUser = userService.getLoginUser(request);
+        ThrowUtils.throwIf(!loginUser.getId().equals(avatarUrl.getId()), ErrorCode.NO_AUTH);
+        boolean result = userService.update(new UpdateWrapper<User>().set("userAvatar",avatarUrl.getUserAvatarUrl()).eq("id",avatarUrl.getId()));
+        return ResultUtils.success(result);
     }
 }

@@ -1,5 +1,6 @@
 package com.hhh.yunpicturebackend.common;
 
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.hhh.yunpicturebackend.exception.ErrorCode;
 import lombok.Data;
 
@@ -10,6 +11,7 @@ import java.io.Serializable;
  * @param <T>
  */
 @Data
+@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, property = "@class")
 public class BaseResponse<T> implements Serializable {
     private  int code;
     private T data;
