@@ -4,6 +4,8 @@ import com.hhh.yunpicturebackend.common.BaseResponse;
 import com.hhh.yunpicturebackend.common.ResultUtils;
 import com.hhh.yunpicturebackend.exception.ErrorCode;
 import com.hhh.yunpicturebackend.exception.ThrowUtils;
+import com.hhh.yunpicturebackend.manager.auth.annotation.SaSpaceCheckPermission;
+import com.hhh.yunpicturebackend.manager.auth.model.SpaceUserPermissionConstant;
 import com.hhh.yunpicturebackend.model.dto.space.analyze.*;
 import com.hhh.yunpicturebackend.model.entity.Space;
 import com.hhh.yunpicturebackend.model.entity.User;
@@ -23,6 +25,7 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequestMapping("/space/analyze")
+@SaSpaceCheckPermission(value = SpaceUserPermissionConstant.SPACE_USER_MANAGE)
 public class SpaceAnalyzeController {
     @Resource
     private SpaceAnalyzeService spaceAnalyzeService;

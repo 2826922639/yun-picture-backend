@@ -89,7 +89,6 @@ public class AiChatWithRAGServiceFactory {
                 .streamingChatModel(openAiStreamingChatModel)
                 .chatMemory(chatMemory)
                 .contentRetriever(createContentRetriever(documents))
-                .tools(toolManager.getTool("searchBaidu"))
                 .inputGuardrails(new PromptSafetyInputGuardrail())// 添加输入护轨
                 //.outputGuardrails(new RetryOutputGuardrail())  // 添加输出护轨(为了流式输出不使用)
                 .build();

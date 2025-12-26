@@ -8,6 +8,8 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.hhh.yunpicturebackend.exception.BusinessException;
 import com.hhh.yunpicturebackend.exception.ErrorCode;
 import com.hhh.yunpicturebackend.exception.ThrowUtils;
+import com.hhh.yunpicturebackend.manager.auth.annotation.SaSpaceCheckPermission;
+import com.hhh.yunpicturebackend.manager.auth.model.SpaceUserPermissionConstant;
 import com.hhh.yunpicturebackend.mapper.SpaceMapper;
 import com.hhh.yunpicturebackend.model.dto.space.analyze.*;
 import com.hhh.yunpicturebackend.model.entity.Picture;
@@ -247,7 +249,7 @@ public class SpaceAnalyzeServiceImpl extends ServiceImpl<SpaceMapper, Space>
             ThrowUtils.throwIf(spaceId == null, ErrorCode.PARAMS_ERROR);
             Space space = this.getById(spaceId);
             ThrowUtils.throwIf(space == null, ErrorCode.NOT_FOUND_ERROR, "空间不存在");
-            spaceService.checkSpaceAuth(loginUser, space);
+            //spaceService.checkSpaceAuth(loginUser, space);
         }
     }
 

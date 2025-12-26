@@ -75,6 +75,9 @@ public class StpInterfaceImpl implements StpInterface {
         if (loginUser == null) {
             throw new BusinessException(ErrorCode.NO_AUTH, "用户未登录");
         }
+        if (userService.isAdmin(loginUser)) {
+            return ADMIN_PERMISSIONS;
+        }
         Long userId = loginUser.getId();
         // 优先从上下文中获取 SpaceUser 对象
         SpaceUser spaceUser = authContext.getSpaceUser();

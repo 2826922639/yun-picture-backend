@@ -9,6 +9,8 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.hhh.yunpicturebackend.exception.BusinessException;
 import com.hhh.yunpicturebackend.exception.ErrorCode;
 import com.hhh.yunpicturebackend.exception.ThrowUtils;
+import com.hhh.yunpicturebackend.manager.auth.annotation.SaSpaceCheckPermission;
+import com.hhh.yunpicturebackend.manager.auth.model.SpaceUserPermissionConstant;
 import com.hhh.yunpicturebackend.manager.sharding.DynamicShardingManager;
 import com.hhh.yunpicturebackend.model.dto.space.SpaceAddRequest;
 import com.hhh.yunpicturebackend.model.dto.space.SpaceQueryRequest;

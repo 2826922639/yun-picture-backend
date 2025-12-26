@@ -12,9 +12,11 @@ import com.hhh.yunpicturebackend.manager.auth.model.SpaceUserPermissionConstant;
 import com.hhh.yunpicturebackend.model.dto.spaceuser.SpaceUserAddRequest;
 import com.hhh.yunpicturebackend.model.dto.spaceuser.SpaceUserEditRequest;
 import com.hhh.yunpicturebackend.model.dto.spaceuser.SpaceUserQueryRequest;
+import com.hhh.yunpicturebackend.model.entity.Space;
 import com.hhh.yunpicturebackend.model.entity.SpaceUser;
 import com.hhh.yunpicturebackend.model.entity.User;
 import com.hhh.yunpicturebackend.model.vo.SpaceUserVO;
+import com.hhh.yunpicturebackend.service.SpaceService;
 import com.hhh.yunpicturebackend.service.SpaceUserService;
 import com.hhh.yunpicturebackend.service.UserService;
 import lombok.extern.slf4j.Slf4j;
@@ -38,6 +40,8 @@ public class SpaceUserController {
 
     @Resource
     private UserService userService;
+    @Resource
+    private SpaceService spaceService;
 
     /**
      * 添加成员到空间
@@ -122,8 +126,11 @@ public class SpaceUserController {
         // 判断是否存在
         long id = spaceUserEditRequest.getId();
         SpaceUser oldSpaceUser = spaceUserService.getById(id);
+        Space space = spaceService.getById(oldSpaceUser.getSpaceId());
         ThrowUtils.throwIf(oldSpaceUser == null, ErrorCode.NOT_FOUND_ERROR);
         ThrowUtils.throwIf(loginUser.getId().equals(oldSpaceUser.getUserId()), ErrorCode.NO_AUTH, "不能修改自己权限！");
+        ThrowUtils.throwIf(oldSpaceUser.getUserId().equals(space.getUserId()), ErrorCode.NO_AUTH, "不能修改空间主人权限！");
+
         // 操作数据库
         boolean result = spaceUserService.updateById(spaceUser);
         ThrowUtils.throwIf(!result, ErrorCode.OPERATION_ERROR);

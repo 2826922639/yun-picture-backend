@@ -35,19 +35,20 @@ public class MoodPictureSearchTool extends BaseTool {
     static {
         MOOD_COLOR_MAP.put("开心", "#602000"); // 暖棕红色 (示例)
         MOOD_COLOR_MAP.put("惊讶", "#6e5b48");
-        MOOD_COLOR_MAP.put("中性", "#513b2b");
+        MOOD_COLOR_MAP.put("平静", "#513b2b");
         MOOD_COLOR_MAP.put("悲伤", "#e0e0e0"); // 浅灰
         MOOD_COLOR_MAP.put("厌恶", "#413839");
         MOOD_COLOR_MAP.put("愤怒", "#200000"); // 深红/黑
         MOOD_COLOR_MAP.put("恐惧", "#000000"); // 纯黑
+        MOOD_COLOR_MAP.put("轻蔑", "#FFFFFF"); // 纯白
     }
 
     @Tool("根据情绪搜索匹配色系的图片")
     public String searchPictureByMood(
-            @P("用户的情绪关键词（开心、惊讶、中性、悲伤、厌恶、愤怒、恐惧）") String mood
+            @P("用户的情绪关键词（开心、惊讶、平静、悲伤、厌恶、愤怒、恐惧、轻蔑）") String mood
     ) {
         if (StrUtil.isBlank(mood) || !MOOD_COLOR_MAP.containsKey(mood)) {
-            return "支持的情绪：开心、惊讶、中性、悲伤、厌恶、愤怒、恐惧。";
+            return "支持的情绪：开心、惊讶、平静、悲伤、厌恶、愤怒、恐惧、轻蔑。";
         }
 
         String targetHex = MOOD_COLOR_MAP.get(mood);
