@@ -1,7 +1,11 @@
 package com.hhh.yunpicturebackend.ai.core.builder;
 
 import cn.hutool.core.util.RuntimeUtil;
+import com.hhh.yunpicturebackend.ai.core.AiCodeGeneratorFacade;
+import com.hhh.yunpicturebackend.ai.enums.CodeGenTypeEnum;
+import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
@@ -10,6 +14,9 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 @Component
 public class VueProjectBuilder {
+    @Resource
+    @Lazy
+    private AiCodeGeneratorFacade aiCodeGeneratorFacade;
     private boolean isWindows() {
         return System.getProperty("os.name").toLowerCase().contains("windows");
     }
@@ -79,7 +86,7 @@ public class VueProjectBuilder {
      * @param projectPath 项目根目录路径
      * @return 是否构建成功
      */
-    public boolean buildProject(String projectPath) {
+    public boolean buildProject(String projectPath,Long appId) {
         File projectDir = new File(projectPath);
         if (!projectDir.exists() || !projectDir.isDirectory()) {
             log.error("项目目录不存在: {}", projectPath);
@@ -89,6 +96,7 @@ public class VueProjectBuilder {
         File packageJson = new File(projectDir, "package.json");
         if (!packageJson.exists()) {
             log.error("package.json 文件不存在: {}", packageJson.getAbsolutePath());
+            aiCodeGeneratorFacade.generateAndSaveCodeStream("package.json 文件不存在",null, CodeGenTypeEnum.VUE_PROJECT,appId);
             return false;
         }
         log.info("开始构建 Vue 项目: {}", projectPath);
@@ -100,6 +108,7 @@ public class VueProjectBuilder {
         // 执行 npm run build
         if (!executeNpmBuild(projectDir)) {
             log.error("npm run build 执行失败");
+            aiCodeGeneratorFacade.generateAndSaveCodeStream("npm run build 执行失败",null, CodeGenTypeEnum.VUE_PROJECT,appId);
             return false;
         }
         // 验证 dist 目录是否生成
@@ -116,7 +125,7 @@ public class VueProjectBuilder {
      *
      * @param projectPath 项目路径
      */
-    public void buildProjectAsync(String projectPath) {
+    /*public void buildProjectAsync(String projectPath) {
         // 在单独的线程中执行构建，避免阻塞主流程
         Thread.ofVirtual().name("vue-builder-" + System.currentTimeMillis()).start(() -> {
             try {
@@ -125,6 +134,6 @@ public class VueProjectBuilder {
                 log.error("异步构建 Vue 项目时发生异常: {}", e.getMessage(), e);
             }
         });
-    }
+    }*/
 }
 

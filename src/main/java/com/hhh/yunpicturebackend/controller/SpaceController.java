@@ -1,6 +1,7 @@
 package com.hhh.yunpicturebackend.controller;
 
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.hhh.yunpicturebackend.annotation.AuthCheck;
 import com.hhh.yunpicturebackend.common.BaseResponse;
@@ -13,10 +14,12 @@ import com.hhh.yunpicturebackend.exception.ThrowUtils;
 import com.hhh.yunpicturebackend.manager.auth.SpaceUserAuthManager;
 import com.hhh.yunpicturebackend.model.dto.space.*;
 import com.hhh.yunpicturebackend.model.entity.Space;
+import com.hhh.yunpicturebackend.model.entity.SpaceUser;
 import com.hhh.yunpicturebackend.model.entity.User;
 import com.hhh.yunpicturebackend.model.enums.SpaceLevelEnum;
 import com.hhh.yunpicturebackend.model.vo.SpaceVO;
 import com.hhh.yunpicturebackend.service.SpaceService;
+import com.hhh.yunpicturebackend.service.SpaceUserService;
 import com.hhh.yunpicturebackend.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
@@ -41,6 +44,8 @@ public class SpaceController {
     private UserService userService;
     @Autowired
     private SpaceUserAuthManager spaceUserAuthManager;
+    @Autowired
+    private SpaceUserService spaceUserService;
 
     @PostMapping("/add")
     public BaseResponse<Long> addSpace(@RequestBody SpaceAddRequest spaceAddRequest, HttpServletRequest request) {
@@ -150,9 +155,16 @@ public class SpaceController {
         long size = spaceQueryRequest.getPageSize();
         // 限制爬虫
         ThrowUtils.throwIf(size > 20, ErrorCode.PARAMS_ERROR);
-        // 查询数据库
         Page<Space> spacePage = spaceService.page(new Page<>(current, size),
                 spaceService.getQueryWrapper(spaceQueryRequest));
+        //如果spaceQueryRequest.getSpaceType()为空，则表示要查询所有空间包括加入的空间
+        if (spaceQueryRequest.getSpaceType() == null) {
+            //通过space_user表查询用户加入的空间id列表
+            List<Long> spaceIdList = spaceUserService.list(new QueryWrapper<SpaceUser>().eq("userId",spaceQueryRequest.getUserId() )).stream().map(SpaceUser::getSpaceId).collect(Collectors.toList());
+            //过滤掉重复的空间
+            spacePage.getRecords().removeIf(space -> spaceIdList.contains(space.getId()));
+            spacePage.getRecords().addAll(spaceIdList.stream().map(spaceId -> spaceService.getById(spaceId)).collect(Collectors.toList()));
+        }
         // 获取封装类
         return ResultUtils.success(spaceService.getSpaceVOPage(spacePage, request));
     }

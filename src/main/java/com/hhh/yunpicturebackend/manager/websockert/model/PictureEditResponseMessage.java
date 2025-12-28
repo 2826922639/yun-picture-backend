@@ -22,7 +22,10 @@ public class PictureEditResponseMessage {
      * 信息
      */
     private String message;
-
+    /**
+     * 内容
+     */
+    private String content;
     /**
      * 执行的编辑动作
      */

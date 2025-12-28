@@ -21,5 +21,9 @@ public class PictureEditRequestMessage {
      * 执行的编辑动作
      */
     private String editAction;
+    /**
+     * 内容
+     */
+    private String content;
 }
 

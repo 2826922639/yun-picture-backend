@@ -50,7 +50,6 @@ public class PictureEditHandler extends TextWebSocketHandler {
     private UserService userService;
     @Resource
     private PictureEditEventProducer pictureEditEventProducer;
-
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
         // 保存会话到集合中
@@ -132,7 +131,15 @@ public class PictureEditHandler extends TextWebSocketHandler {
             broadcastToPicture(pictureId, pictureEditResponseMessage, session);
         }
     }
-
+    public void handleSendMessage(PictureEditRequestMessage pictureEditRequestMessage, WebSocketSession session, User user, Long pictureId) throws Exception {
+        PictureEditResponseMessage pictureEditResponseMessage = new PictureEditResponseMessage();
+        pictureEditResponseMessage.setType(PictureEditMessageTypeEnum.SEND_MASSAGE.getValue());
+        String message = pictureEditRequestMessage.getContent();
+        pictureEditResponseMessage.setContent(message);
+        pictureEditResponseMessage.setUser(userService.getUserVO(user));
+        // 广播给同一张图片的用户
+        broadcastToPicture(pictureId, pictureEditResponseMessage);
+    }
     /**
      * 退出编辑状态
      */

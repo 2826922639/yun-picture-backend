@@ -41,6 +41,9 @@ public class PictureEditEventWorkHandler implements WorkHandler<PictureEditEvent
         PictureEditMessageTypeEnum pictureEditMessageTypeEnum = PictureEditMessageTypeEnum.valueOf(type);
         // 调用对应的消息处理方法
         switch (pictureEditMessageTypeEnum) {
+            case SEND_MASSAGE:
+                pictureEditHandler.handleSendMessage(pictureEditRequestMessage, session, user, pictureId);
+                break;
             case ENTER_EDIT:
                 pictureEditHandler.handleEnterEditMessage(pictureEditRequestMessage, session, user, pictureId);
                 break;
