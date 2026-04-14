@@ -1,0 +1,105 @@
+spring:
+ redis:
+  database: 0
+  host: localhost
+  port: 6379
+  password: ""
+  timeout: 5000
+mybatis-plus:
+ configuration:
+  #生产环境关闭日志
+  log-impl: ''
+#接口文档配置
+knife4j:
+ basic:
+  enable: true
+  username: root
+  password: 123456
+   #对象存储配置
+#对象存储配置（从腾讯云获取）
+cos:
+  client:
+    host: https://yun-picture-1351791618.cos.ap-shanghai.myqcloud.com
+    secretId: AKIDMh4EcomYGl8HC0rjP3d3GG9LMAtRnxug
+    secretKey: f8PUO6auERSPIcnlW4PWP5ZrvsfFbmiR
+    region: ap-shanghai
+    bucket: yun-picture-1351791618
+
+# 阿里云 AI 配置
+aliYunAi:
+  apiKey: sk-e4cef03177864fd89a10dcf0bdaa2cf4
+
+gemini:
+  api-key: AIzaSyARSvVHijFl4mH9dVe-5XwvTy84b7ygt1E  # 从 https://ai.google.dev/ 获取
+  model-name: gemini-2.5-flash  # 可选：gemini-2.5-pro、gemini-3-pro-preview 等
+  base-url: https://generativelanguage.googleapis.com/v1beta  # 原生 API 根端点（固定）
+  max-tokens: 8192  # 最大输出令牌（按模型上限调整）
+  timeout: 1000000  # 超时时间（毫秒）
+  temperature: 0.7  # 随机性（0-1，0 更确定）
+  top-p: 0.95  # 累计概率（官方推荐值）
+  top-k: 64  # 候选令牌数（官方推荐值）
+  # 思考配置（可选，按文档启用）
+  thinking:
+    enable: true
+    thinking-budget: 250  # 2.5 系列用预算（数字），3 系列用 thinking-level: low/high
+    include-thoughts: true
+  # 安全设置（可选，避免内容过滤导致的响应失败）
+  safety-settings:
+    harmful-content: block-none  # 对有害内容不拦截（根据需求调整）
+zhipu:
+  base-url: https://open.bigmodel.cn/
+  api-key: 7a9b58c6d3e84b5784718a7465a782d3.O6SYGR85tmLno7Ph
+  model-name: glm-4.5
+  max-tokens: 8192
+# AI
+langchain4j:
+  open-ai:
+    chat-model:
+      base-url: https://api.deepseek.com
+      api-key: sk-7415fc0a9a054a5eb1580f3228449c91
+      model-name: deepseek-chat
+      #      strict-json-schema: true
+      #      response-format: json_object
+      max-tokens: 8192
+      log-requests: true
+      log-responses: true
+      max-retries: 3
+    streaming-chat-model:
+      max-tokens: 8129
+      timeout: 1000000
+      base-url: https://dashscope.aliyuncs.com/compatible-mode/v1
+      api-key: sk-fab2078b29444fa19adc489615409672
+      model-name: qwen-coder-turbo
+      log-requests: true
+      log-responses: true
+      max-retries: 3
+    # 推理 AI 模型配置（用于复杂的推理任务）
+    reasoning-streaming-chat-model:
+      timeout: 1000000
+      base-url: https://dashscope.aliyuncs.com/compatible-mode/v1
+      api-key: sk-fab2078b29444fa19adc489615409672
+      model-name: qwen3-coder-plus
+      max-tokens: 32768
+      temperature: 0.1
+      log-requests: true
+      log-responses: true
+      max-retries: 3
+    # 智能路由 AI 模型配置（用于简单的分类任务）
+    routing-chat-model:
+      base-url: https://dashscope.aliyuncs.com/compatible-mode/v1
+      api-key: sk-fab2078b29444fa19adc489615409672
+      model-name: qwen-turbo
+      max-tokens: 100
+      log-requests: true
+      log-responses: true
+      max-retries: 3
+    #图片理解聊天模型配置
+    streaming-chat-model-image:
+      base-url: https://dashscope.aliyuncs.com/compatible-mode/v1
+      api-key: sk-fab2078b29444fa19adc489615409672
+      model-name: qwen3-vl-flash
+      max-tokens: 4000
+      timeout: 1000000
+      log-requests: true
+      log-responses: true
+      max-retries: 3
